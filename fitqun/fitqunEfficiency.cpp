@@ -64,12 +64,25 @@ void fitqunEfficiency::setBranches(){
   TChain *chain = new TChain("h1");
   chain->Add(core->getFileName(treeNum).c_str());
 
+  /******************************************/
+  /*          SETTING BRANCHES              */
+  /******************************************/
+  /* This is not nice. Need to shift this   */
+  /* to .h, preferebly into some compact    */
+  /* struct!                                */
+  /*----------------------------------------*/
+  /*----------------------------------------*/
+  /* And maybe do it from the core, that way*/
+  /* We won't have to do it for each class  */
+  /******************************************/
+
+  // Set input branches (need to add momentum)
   chain->SetBranchAddress("nring", &br.nring);
   chain->SetBranchAddress("ip", &br.ip);
-  
   chain->SetBranchAddress("fqmrnring", &br.fqmrnring);
   chain->SetBranchAddress("fqmrpid", &br.fqmrpid);
 
+  // Set output branches (need to add momentum)
   outTree->Branch("is_nring", &out.is_nring, "is_ring/O");
   outTree->Branch("is_pid_all", &out.is_pid_all, "is_pid_all/O");
   outTree->Branch("is_pid_first", &out.is_pid_first, "is_pid_first/O");
@@ -77,14 +90,13 @@ void fitqunEfficiency::setBranches(){
 
   outTree->Branch("nring", &br.nring, "nring/I");
   outTree->Branch("ip", &br.ip, "ip[10]/b");
-  
   outTree->Branch("fqmrnring", &br.fqmrnring, "fqmrnring[10]/I");
   outTree->Branch("fqmrpid", &br.fqmrpid, "fqmrpid[15][6]");
 
+  // Get number of entries (Do it from core!)
   int nEntries = chain->GetEntries();
 
-//  (fitqunEfficiency*)(chain);
-
+  // Iterate through all the events
   for (int i = 0; i < nEntries ; ++i){
     chain->GetEntry(i);
 
@@ -115,20 +127,6 @@ void fitqunEfficiency::setBranches(){
       }
     }
 
-
-
-
-
-//    if( (br.nring == br.fqmrnring[0])&&(br.nring > 1) ){
-//      std::cout << "\n*********************************************************************" << std::endl;
-//      std::cout << "EVENT NUMBER: " << i << std::endl;
-//      std::cout << "ip: " << int(br.ip[0]) << std::endl;
-//      std::cout << "MC nRings: " << br.nring << " fiTQun: " << br.fqmrnring[0] << std::endl;
-//      for(UInt_t j = 0; j < br.nring ; ++j){
-//        std::cout << "-- MC ring: " << j << " MC PID: " << int(br.ip[j]) << " fiTQun PID: " << br.fqmrpid[0][j] +1<< std::endl;
-//      }
-//      std::cout << "\n*********************************************************************" << std::endl;
-//    }
     outTree->Fill();
   }
   outTree->Write(treename.c_str());
