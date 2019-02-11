@@ -75,11 +75,11 @@ void fitqunEfficiency::setBranches(){
   outTree->Branch("is_pid_first", &out.is_pid_first, "is_pid_first/O");
   outTree->Branch("is_pid_all_nring", &out.is_pid_all_nring, "is_pid_all_nring/O");
 
-  outTree->Branch("nring", &br.nring);
-  outTree->Branch("ip", br.ip);
+  outTree->Branch("nring", &br.nring, "nring/I");
+  outTree->Branch("ip", &br.ip, "ip[10]/b");
   
-  outTree->Branch("fqmrnring", br.fqmrnring);
-  outTree->Branch("fqmrpid", &br.fqmrpid);
+  outTree->Branch("fqmrnring", &br.fqmrnring, "fqmrnring[10]/I");
+  outTree->Branch("fqmrpid", &br.fqmrpid, "fqmrpid[15][6]");
 
   int nEntries = chain->GetEntries();
 
