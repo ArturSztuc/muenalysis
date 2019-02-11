@@ -47,7 +47,7 @@ struct OutEvent{
   bool is_pid_all;
   bool is_pid_first;
   bool is_pid_all_nring;
-}
+};
 
 class fitqunEfficiency
 {

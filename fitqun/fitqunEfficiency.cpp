@@ -76,10 +76,10 @@ void fitqunEfficiency::setBranches(){
   outTree->Branch("is_pid_all_nring", &out.is_pid_all_nring, "is_pid_all_nring/O");
 
   outTree->Branch("nring", &br.nring);
-  outTree->BranchAddress("ip", &br.ip);
+  outTree->Branch("ip", br.ip);
   
-  outTree->BranchAddress("fqmrnring", &br.fqmrnring);
-  outTree->BranchAddress("fqmrpid", &br.fqmrpid);
+  outTree->Branch("fqmrnring", br.fqmrnring);
+  outTree->Branch("fqmrpid", &br.fqmrpid);
 
   int nEntries = chain->GetEntries();
 
@@ -94,12 +94,12 @@ void fitqunEfficiency::setBranches(){
       out.is_nring = false;
 
 
-    if (int(br.ip[0]) == br.fqmrpid[0])
+    if (int(br.ip[0]) == br.fqmrpid[0][0])
       out.is_pid_first = true;
     else
       out.is_pid_first = false;
 
-    for(int j = 0; j < br.nring; ++j){
+    for(UInt_t j = 0; j < br.nring; ++j){
       out.is_pid_all = true;
       if( int(br.ip[j]) != br.fqmrpid[0][j]+1 )
         out.is_pid_all = false;
@@ -109,9 +109,10 @@ void fitqunEfficiency::setBranches(){
     if (br.nring != br.fqmrnring[0])
       out.is_pid_all_nring = false;
     else{
-    for(int j = 0; j < br.nring; ++j){
-      if( int(br.ip[j]) != br.fqmrpid[0][j]+1 )
-        out.is_pid_all_nring = false;
+      for(UInt_t j = 0; j < br.nring; ++j){
+        if( int(br.ip[j]) != br.fqmrpid[0][j]+1 )
+          out.is_pid_all_nring = false;
+      }
     }
 
 
