@@ -28,28 +28,28 @@ int main(int argc, char *argv[]) {
   core->setOutputName(argv[argc-1]);
 
   // Make a new comparison object
-//  comparison *compare = new comparison();
+ comparison *compare = new comparison();
+
+ // Link it with the core
+ compare->setCore(core);
+
+ // Make comparison plots
+ compare->makeComparisons();
+
+//  cuts *cutsmanager = new cuts();
 //
-//  // Link it with the core
-//  compare->setCore(core);
+//  cutsmanager->addCut("nring", 1, "==");
+////  cutsmanager->addCut("fqmrnring[0]", 1, "==");
 //
-//  // Make comparison plots
-//  compare->makeComparisons();
-
-  cuts *cutsmanager = new cuts();
-
-  cutsmanager->addCut("nring", 1, "==");
-//  cutsmanager->addCut("fqmrnring[0]", 1, "==");
-
-  for(int i=0; i < cutsmanager->getNCuts();  ++i)
-    std::cout << cutsmanager->getCutString(i) << std::endl;
-
-  cutsmanager->setCore(core);
-  cutsmanager->setCuts(0);
-
-  for(int i =0; i < 900 ; ++i){
-    cutsmanager->isCut(0, i);
-  }
+//  for(int i=0; i < cutsmanager->getNCuts();  ++i)
+//    std::cout << cutsmanager->getCutString(i) << std::endl;
+//
+//  cutsmanager->setCore(core);
+//  cutsmanager->setCuts(0);
+//
+//  for(int i =0; i < 900 ; ++i){
+//    cutsmanager->isCut(0, i);
+//  }
 
   return 0; 
 }

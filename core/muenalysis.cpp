@@ -7,7 +7,7 @@ muenalysis::muenalysis(){
 }
 
 
-// Sets the input file bu reading all the branches.
+// Sets the input file and reads all the branches.
 void muenalysis::setBranches(std::string file){
   std::cout << "Reading branches from file: " << file << std::endl;
 

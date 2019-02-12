@@ -36,7 +36,6 @@ void fitqunEfficiency::setCore(muenalysis *coreIn){
   std::size_t pos;
   pos = outputname.find(".root");
   outputname = outputname.substr(0,pos);
-
 }
 
 void fitqunEfficiency::setName(char* name){
@@ -47,7 +46,6 @@ void fitqunEfficiency::setName(char* name){
 void fitqunEfficiency::appendName(char* name){
   outputname += name;
 }
-
 
 // Will set the branches using core
 void fitqunEfficiency::setBranches(){
