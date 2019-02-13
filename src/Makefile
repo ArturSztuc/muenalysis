@@ -5,7 +5,8 @@ all : $(TRGS)
 
 OPTS := -O3 -Wno-write-strings
 
-ROOTLIBS := $(shell root-config --glibs --libs --evelibs) -lRooFit -lRooFitCore -lHist -lTree -lCore -lMinuit -lgomp -lRooFitCore -lHistPainter
+#ROOTLIBS := $(shell root-config --glibs --libs --evelibs) -lRooFit -lRooFitCore -lHist -lTree -lCore -lMinuit -lgomp -lRooFitCore -lHistPainter
+ROOTLIBS := $(shell root-config --glibs --libs --evelibs)  -lHist -lTree -lCore -lMinuit -lgomp -lHistPainter
 ROOTINCLUDES := $(shell root-config --prefix)/include 
 ROOTCFLAGS := $(shell root-config --cflags)
 GSL_LIBS=$(shell gsl-config --libs)
