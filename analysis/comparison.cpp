@@ -81,8 +81,10 @@ void comparison::makeComparisons(){
       }
 
       c2->SaveAs((outName+"_"+core->getBranchName(0,i)+"_comparison.png").c_str());
+      delete c2;
     }
     c1->Clear();
+    delete c1;
   }
 
   delete fout;

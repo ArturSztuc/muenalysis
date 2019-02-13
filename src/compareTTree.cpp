@@ -13,7 +13,9 @@ int main(int argc, char *argv[]) {
   // If less than 4 then we're missing either an output file or one of the
   // (minimum of 2!) input root files.
   if (argc < 4) {
+    std::cerr << "Wrong usage of the executible. Please use in format:" << std::endl;
     std::cerr << "./plotTracks inputFile.root inputFile2.root outputFile.root" << std::endl;
+    std::cerr << "-- (You can have any >2 number of inutFile.root's, as long \n-- as we have outputFile at the end" << std::endl;
     exit(-1);
   }
   
