@@ -1,0 +1,13 @@
+# ignore automatically generated folders
+bin
+lib
+
+# ignore compiled files
+*.o
+*.a
+
+# ignore vim swap files
+*.swp
+
+# ignore some of the output from the exes...
+*.png
