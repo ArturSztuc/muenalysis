@@ -27,7 +27,7 @@ CXXFLAGS += -fopenmp
 OMP_DEFINES = -DMULTITHREAD
 endif
 
-OBJECTS := comparison.o cuts.o
+OBJECTS := comparison.o cuts.o skutil.o
 
 %.o:%.cpp
 	g++ -c $(CXXFLAGS) $< $(OMP_DEFINES)

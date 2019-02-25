@@ -27,7 +27,7 @@ CXXFLAGS += -fopenmp
 OMP_DEFINES = -DMULTITHREAD
 endif
 
-OBJECTS := fitqunEfficiency.o
+OBJECTS := fitqunEfficiency.o fitqunBranchParser.o fitqunEfficiencySimple.o
 
 %.o:%.cpp
 	g++ -c $(CXXFLAGS) $< $(OMP_DEFINES)
