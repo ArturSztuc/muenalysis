@@ -42,6 +42,7 @@ class muenalysis{
     int getNFiles(){ return nFiles; };
     std::vector<int> getNBranches(){ return nBranches; };
     std::vector<int> getNEvents(){ return nEvents; };
+    int getNEvents(int i){ return nEvents[i]; };
     TTree *getTTree(int i){ return trees[i]; };
     TChain *getTChain(int i){ return chains[i]; };
     std::string getBranchName(int i, int j){ return branchNames[i][j]; };
