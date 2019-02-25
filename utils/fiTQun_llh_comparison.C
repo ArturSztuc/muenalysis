@@ -90,20 +90,21 @@ void fiTQun_llh_comparison(std::string fs1, std::string fs2, int nbins = 10, TSt
   // Still try to compare branches if number of entries doesnt match...
   int nEntries = 0;
   if(nEntries1 > nEntries2)
-    nEntries = nEntries2;
-  else if (nEntries2 > nEntries1)
     nEntries = nEntries1;
+  else if (nEntries2 > nEntries1)
+    nEntries = nEntries2;
   else
     nEntries = nEntries1;
 
+  std::cout << "File 1 nEntries1: " << nEntries1 << " File 2 nEntries2: " << nEntries2 << " nEntries: " << nEntries << std::endl;
 
   TCanvas *c = new TCanvas("c", "c", 1000, 800);
   c->SetFillColor(10);
 
   // Fill first file
-  for (int i = 0; i < nEntries; ++i){
+  for (int i = 0; i < nEntries1; ++i){
     t1->GetEntry(i);
-    std::cout << "Entry F1: " << i << std::endl;
+//    std::cout << "Entry F1: " << i << std::endl;
 
     // Apply cuts!
     // Still need to implement towall > 250 and evclass==1.
@@ -134,10 +135,8 @@ void fiTQun_llh_comparison(std::string fs1, std::string fs2, int nbins = 10, TSt
   }
 
   // Fill second file
-  for (int i = 0; i < nEntries; ++i){
+  for (int i = 0; i < nEntries2; ++i){
     t2->GetEntry(i);
-    std::cout << "Entry F2: " << i << std::endl;
-
     // Apply cuts!
     // Still need to implement towall > 250 and evclass==1.
     // evclass is missing from the inputs for now?
@@ -165,6 +164,9 @@ void fiTQun_llh_comparison(std::string fs1, std::string fs2, int nbins = 10, TSt
 
     nring_hist2->Fill(fqmrnll2[0]);
   }
+
+  nring_hist1->Scale(1/(double)nEntries1);
+  nring_hist2->Scale(1/(double)nEntries2);
 
   // Asthetics
   nring_hist2->SetLineColor(kRed);

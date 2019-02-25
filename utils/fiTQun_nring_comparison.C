@@ -93,12 +93,13 @@ void fiTQun_nring_comparison(std::string fs1, std::string fs2, TString l1="File 
   else
     nEntries = nEntries1;
 
+  std::cout << "File 1 nEntries1: " << nEntries1 << " File 2 nEntries2: " << nEntries2 << " nEntries: " << nEntries << std::endl;
 
   TCanvas *c = new TCanvas("c", "c", 1000, 800);
   c->SetFillColor(10);
 
   // Do it for first file...
-  for (int i = 0; i < nEntries; ++i){
+  for (int i = 0; i < nEntries1; ++i){
     t1->GetEntry(i);
     std::cout << "Entry F1: " << i << std::endl;
 
@@ -131,7 +132,7 @@ void fiTQun_nring_comparison(std::string fs1, std::string fs2, TString l1="File 
   }
 
   // And for the second file.
-  for (int i = 0; i < nEntries; ++i){
+  for (int i = 0; i < nEntries1; ++i){
     t2->GetEntry(i);
     std::cout << "Entry F2: " << i << std::endl;
 
@@ -162,6 +163,9 @@ void fiTQun_nring_comparison(std::string fs1, std::string fs2, TString l1="File 
 
     nring_hist2->Fill(fqmrnring2[0]);
   }
+
+  nring_hist1->Scale(1/nEntries1);
+  nring_hist2->Scale(1/nEntries2);
 
   // Asthetics
   nring_hist2->SetLineColor(kRed);
