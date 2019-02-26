@@ -32,6 +32,8 @@ int main(int argc, char *argv[]) {
 //  fitqun->setBranches();
 
   fqeffsimp *fitqun = new fqeffsimp(core);
+  fitqun->setTLegendTitle( "woFlag" );
+  fitqun->setTLegendTitle( "wFlag" );
   fitqun->plotLlh();
 
   return 0; 
