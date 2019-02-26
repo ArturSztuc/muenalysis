@@ -126,12 +126,40 @@ void fqeffsimp::plotLlh(){
       if(parser[file]->isWithinT2KCut())
         plots[file]->Fill(parser[file]->E->fqmrnll[0]);
     }
+    // Scale the histogram to get an "efficiency". In this case the denominator
+    // is the pre-cut number of events
+    plots[file]->Scale(1/(double)chains[file]->GetEntries());
+    
+    // Apply colors. Starting with Black
+    plots[file]->SetLineColor(file+1);
+
+    // The rest of the asthetics (local)
+    plots[file]->GetXaxis()->SetTitle("Best fit fiTQun -lnL (fqmrnll[0])");
+    plots[file]->GetYaxis()->SetTitle("Efficiency (nEvents_postcut/nEvents_precut");
+
+    plots[file]->SetLineWidth(2);
+
+    if (file==0)
+      plots[file]->GetYaxis()->SetTitleOffset(1.5);
+
   }
+  // The rest of the asthetics (global)
+  gPad->SetLeftMargin(0.15);
 
-
-
-
-
+  // Make a legend!
+  TLegend *leg = new TLegend(0.48, 0.7, 0.89, 0.89);
+  leg->SetFillColor(10);
+  leg->SetLineColor(0);
+  leg->SetTextSize(0.05);
+  for(int i = 0; i < nfiles ; ++i){
+    leg->AddEntry(plots[i], legendTitles[i].c_str());
+    if(i==0)
+      plots[i]->Draw();
+    else
+      plots[i]->Draw("SAME");
+  }
+  leg->Draw("SAME");
+  c->SaveAs((outputfilename + ".png").c_str());
 }
 
 
