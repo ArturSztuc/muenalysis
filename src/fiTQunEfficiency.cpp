@@ -34,7 +34,22 @@ int main(int argc, char *argv[]) {
   fqeffsimp *fitqun = new fqeffsimp(core);
   fitqun->setTLegendTitle( "woFlag" );
   fitqun->setTLegendTitle( "wFlag" );
+
+  // Do Numu disappearance 
+  fitqun->setCuts(true, false, false);
+  fitqun->setOutputName("output_numu");
   fitqun->plotLlh();
+
+  // Do nue appearance
+  fitqun->setCuts(false, true, false);
+  fitqun->setOutputName("output_nue");
+  fitqun->plotLlh();
+
+  // Do nue appearance
+  fitqun->setCuts(false, false, true);
+  fitqun->setOutputName("output_nueCC1pi");
+  fitqun->plotLlh();
+  
 
   return 0; 
 }
