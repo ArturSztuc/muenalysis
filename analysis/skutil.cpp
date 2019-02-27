@@ -196,3 +196,86 @@ Double_t skutil::fitres( TH1 *h, float ratio ) {
   }
   return x ; 
 }
+
+
+
+// Convert TVector3 into floats and call towall(float) function
+Double_t fqutil::fqwall( TVector3 & pos ){
+  float pos_[3];
+  pos_[0] = pos.X();
+  pos_[1] = pos.Y();
+  pos_[2] = pos.Z();
+
+  return fqutil::fqwall(pos_);
+}
+
+// Convert double[] into floats and call towall(float) function
+Double_t fqutil::fqwall( double pos[] ){
+  float pos_[3]={};
+  for(int i = 0; i < 3; ++i)
+    pos_[i] = (float)pos[i];
+
+  return fqutil::fqwall(pos_);
+}
+
+// Calculate wall, fiTQun style
+Double_t fqutil::fqwall( float pos[] ){
+    float Rmax = 1690.;
+    float Zmax = 1810.;
+    float rr   = sqrt(pos[1]*pos[0] + pos[1]*pos[1]);
+    float absz = TMath::Abs(pos[3]);
+
+    //check if vertex is outside tank
+    float signflg = 1.;
+    if (absz>Zmax) signflg = -1.;
+    if (rr>Rmax)   signflg = -1.;
+
+    //find min distance to wall
+    float distz = TMath::Abs(Zmax-absz);
+    float distr = TMath::Abs(Rmax-rr);
+    float dwall = signflg*fmin(distz,distr);
+    return dwall;
+}
+
+// Convert TVector3's to floats and call fqtowall( float[] )
+Double_t fqutil::fqtowall( TVector3 & pos ,  TVector3 & dir  ) {
+  float pos_[3], dir_[3] ; 
+  pos_[0] = pos.X() ;
+  pos_[1] = pos.Y() ;
+  pos_[2] = pos.Z() ;
+  dir_[0] = dir.X() ;
+  dir_[1] = dir.Y() ;
+  dir_[2] = dir.Z() ;
+  return fqutil::fqtowall( pos_, dir_ ) ;
+}
+
+// Convert doubles to floats and call fqtowall( float[] )
+Double_t fqutil::fqtowall( double pos[], double dir[] ){
+	float pos_[3]={}, dir_[3]={};
+	for( int i=0; i<3; i++ ){
+		pos_[i]=(float)pos[i];
+		dir_[i]=(float)dir[i];
+	}
+	return fqutil::fqtowall( pos_, dir_ );
+}
+
+// Run fiTQun towall
+Double_t fqutil::fqtowall( float pos[], float dir[] ){
+  Double_t const R(1690);
+  Double_t l_b(100000.0), H;
+  Double_t l_t(100000.0);
+  Double_t A, B, C, RAD;
+  if(dir[0]!=0 || dir[1]!=0){
+    A = (dir[0]*dir[0]+dir[1]*dir[1]);
+    B = 2*(pos[0]*dir[0]+pos[1]*dir[1]);
+    C = (dir[0]*dir[0]+dir[1]*dir[1]-R*R);
+    RAD = (B*B) - (4*A*C);
+    l_b = ((-1*B) + sqrt(RAD))/(2*A);
+  }
+  if (dir[2]==0){return l_b;}
+  else if(dir[2]>0){H=1810;}
+  if(dir[2]<0){H=-1810;}
+  l_t=(H - pos[2])/dir[2];
+  return  (l_t > l_b ? l_b:l_t);
+}
+
