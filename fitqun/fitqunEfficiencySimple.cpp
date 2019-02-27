@@ -6,9 +6,12 @@
 
 // Boring default constructor
 fqeffsimp::fqeffsimp(){
+  outputfilename = "outputfilename";
   nbins = 10;
-  cuts = false;
-  outputfilename = "outputfilename.root";
+
+  T2KCUTnumuDis = false;
+  T2KCUTnueApp = false;
+  T2KCUTnueCC1pi = false;
 }
 
 // Overload the constructor with core
@@ -41,7 +44,9 @@ fqeffsimp::fqeffsimp(muenalysis *coreIn){
 
   // The rest of the constructor...
   nbins = 10;
-  cuts = false;
+  T2KCUTnumuDis = false;
+  T2KCUTnueApp = false;
+  T2KCUTnueCC1pi = false;
 }
 
 // Sets core 
@@ -74,6 +79,20 @@ void fqeffsimp::setCore(muenalysis *coreIn){
   }
 }
 
+// Sets the cuts.
+void fqeffsimp::setCuts(bool numu, bool nue, bool nuecc1pi){
+  T2KCUTnumuDis = numu;
+  T2KCUTnueApp = nue;
+  T2KCUTnueCC1pi = nuecc1pi;
+
+  if(numu)
+    std::cout << "FQEFFSIMP: Running numu disappearance cuts!" << std::endl;
+  if(nue)
+    std::cout << "FQEFFSIMP: Running nue appearance cuts!" << std::endl;
+  if(nuecc1pi)
+    std::cout << "FQEFFSIMP: Running nueCC1pi sample cuts!" << std::endl;
+}
+
 // The main plotting function. For now it's just a llh plotter, but we will
 // expand ang generalise this!
 void fqeffsimp::plotLlh(){
@@ -100,7 +119,6 @@ void fqeffsimp::plotLlh(){
 
   // Some sanity checks, just in case
   for(int i = 1; i < nfiles; ++i){
-//    if(core->getNEvents(i-1) != core->getNEvents(i)){
     if(chains[i-1]->GetEntries()!= chains[i]->GetEntries()){
       std::cout << "FLAG: number of entries don't math between: " << std::endl;
     }
@@ -119,12 +137,22 @@ void fqeffsimp::plotLlh(){
 
       // Get entry for this file/event. The parser contains has all the yummy values
       chains[file]->GetEntry(i);
+      parser[file]->GetEntry();
+
       if(i == 1)
-        parser[file]->PrintEvent(i);
+        parser[file]->PrintEvent(file);
 
       // Are the T2K cuts met?
-      if(parser[file]->isWithinT2KCut())
-        plots[file]->Fill(parser[file]->E->fqmrnll[0]);
+      if((T2KCUTnumuDis)&&(!parser[file]->isT2KnumuDis()))
+        continue;
+      if((T2KCUTnueApp)&&(!parser[file]->isT2KnueApp()))
+        continue;
+      if((T2KCUTnueCC1pi)&&(!parser[file]->isT2KnueCC1pi()))
+        continue;
+
+      plots[file]->Fill(parser[file]->E->fqmrnll[0]);
+
+      // Prints first event for each file, just for dome extra debugging.
     }
     // Scale the histogram to get an "efficiency". In this case the denominator
     // is the pre-cut number of events
@@ -135,7 +163,7 @@ void fqeffsimp::plotLlh(){
 
     // The rest of the asthetics (local)
     plots[file]->GetXaxis()->SetTitle("Best fit fiTQun -lnL (fqmrnll[0])");
-    plots[file]->GetYaxis()->SetTitle("Efficiency (nEvents_postcut/nEvents_precut");
+    plots[file]->GetYaxis()->SetTitle("Tagging efficiency");
 
     plots[file]->SetLineWidth(2);
 
@@ -159,7 +187,7 @@ void fqeffsimp::plotLlh(){
       plots[i]->Draw("SAME");
   }
   leg->Draw("SAME");
-  c->SaveAs((outputfilename + ".png").c_str());
+  c->SaveAs((outputfilename + "_eff_fqmrnll.png").c_str());
 }
 
 

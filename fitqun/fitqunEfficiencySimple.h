@@ -24,6 +24,7 @@
 #include <sstream>
 
 #include "core/muenalysis.h"
+#include "analysis/skutil.h"
 #include "fitqunBranchParser.h"
 
 class fqeffsimp {
@@ -42,12 +43,14 @@ class fqeffsimp {
     void setTLegendTitle(std::string legT){ legendTitles.push_back(legT); };
 
     // Sets cuts
-    void setCutsBool(bool cutsIn){ cuts = cutsIn; };
+//    void setCutsBool(bool cutsIn){ cuts = cutsIn; };
 
     // Sets output name
     void setOutPrefix(std::string prefix);
     void setOutPostfix(std::string postfix);
     void setOutputName(std::string outName){ outputfilename = outName; };
+
+    void setCuts(bool numu, bool nue, bool nuecc1pi);
 
     // Make llh plots
     void plotLlh();
@@ -68,10 +71,13 @@ class fqeffsimp {
     std::vector< fqbrparser* > parser;
 
     // Do we apply T2K cuts?
-    bool cuts;
+    bool T2KCUTnumuDis;
+    bool T2KCUTnueApp;
+    bool T2KCUTnueCC1pi;
 
     // Number of files to nalyse;
     int nfiles;
+
 
     // Output filename
     std::string outputfilename;
