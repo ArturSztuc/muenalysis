@@ -20,14 +20,14 @@ void comparison::makeComparisons(){
   // We'll do a few checks first...
   // Need more than one file with TTree's to compare
   if(nFiles < 2){
-    std::cerr << "ERROR: Only one .root file loaded!" << std::endl;
+    std::cerr << "ERROR: " << __FILE__ << ":" << __LINE__ << ": Only one .root file loaded!" << std::endl;
     std::exit(EXIT_FAILURE);
   }
   // Need to make sure there's an equal number of branches in each
   // file. Perhaps should do string comparison here...
   for(int i = 1; i < nFiles; ++i){
     if(nBranches[i] != nBranches[i-1]){
-      std::cerr << "ERROR: Unequal number of branches in each file!" << std::endl;
+      std::cerr << "ERROR: " << __FILE__ << ":" << __LINE__ << ": Unequal number of branches in each file!" << std::endl;
       std::exit(EXIT_FAILURE);
     }
 
@@ -35,7 +35,7 @@ void comparison::makeComparisons(){
     // but it's probably fine if they differ; we're comparing histograms,
     // not event-by-event.
     if(nEvents[i] != nEvents[i-1]){
-      std::cerr << "WARNING: unequal number of events per file." << std::endl;
+      std::cerr << "WARNING: "<<__FILE__<<":"<<__LINE__<<": unequal number of events per file." << std::endl;
       std::cerr << "-------: Probably should be fine, we're comparing histograms not events!" << std::endl;
     }
   }
@@ -46,7 +46,7 @@ void comparison::makeComparisons(){
 
 
   // Now we can start making TH1D's for each branch!
-  std::cout << "Making comparisons of " << nFiles << "TTree's with " 
+  std::cout << "ANALYSIS: Making comparisons of " << nFiles << "TTree's with " 
     << nBranches[0] << "branches each." << std::endl;
 
 
@@ -122,12 +122,12 @@ void comparison::compareFiles(int branch){
       if(wrong) continue;
       if (binh[i-1] != binh[i] ){
         wrong = true;
-        std::cout << "\n******************************************************************" << std::endl;
-        std::cout << "Watch out, bins don't match, we will output the plot for this one!" << std::endl;
-        std::cout << "Parameter: " << core->getBranchName(0,branch) << " Bin number: " << j << std::endl;
-        std::cout << "Bin ratio: " << binh[i-1]/binh[i] << std::endl;
-        std::cout << "Bin 1: " << binh[i-1] << " Bin 2: " << binh[i] << std::endl;
-        std::cout << "******************************************************************\n" << std::endl;
+        std::cout << "\n****************************************************************************" << std::endl;
+        std::cout << "ANALYSIS: Watch out, bins don't match, we will output the plot for this one!" << std::endl;
+        std::cout << "ANALYSIS: Parameter: " << core->getBranchName(0,branch) << " Bin number: " << j << std::endl;
+        std::cout << "ANALYSIS: Bin ratio: " << binh[i-1]/binh[i] << std::endl;
+        std::cout << "ANALYSIS: Bin 1: " << binh[i-1] << " Bin 2: " << binh[i] << std::endl;
+        std::cout << "****************************************************************************\n" << std::endl;
       }
     }
   }

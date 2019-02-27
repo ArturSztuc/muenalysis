@@ -2,6 +2,8 @@
 
 // Default constructor
 muenalysis::muenalysis(){
+  // Acknowledge we're running core!
+  std::cout << "CORE: Core constructor called." << std::endl;
   nFiles = 0;
   outputname = "dummy.root";
 }
@@ -9,7 +11,7 @@ muenalysis::muenalysis(){
 
 // Sets the input file and reads all the branches.
 void muenalysis::setBranches(std::string file){
-  std::cout << "Reading branches from file: " << file << std::endl;
+  std::cout << "CORE: Reading branches from file: " << file << std::endl;
 
   fileNames.push_back(file);
 
@@ -48,7 +50,7 @@ void muenalysis::setBranches(std::string file){
   // We will use it later e.g. for branch reading/debuggin
   nEvents.push_back(((TBranch*)branchList.back()->At(0))->GetEntries());
   
-  std::cout << "About to start iteration through branches for " << file << std::endl;
+  std::cout << "CORE: About to start iteration through branches for " << file << std::endl;
   // Iterate through branches and get all the item type names
   for(int i = 0; i < nBranches.back(); i++){
     TBranch *br = (TBranch*)branchList.back()->At(i);
@@ -60,9 +62,9 @@ void muenalysis::setBranches(std::string file){
     EDataType edatatype;
     br->GetExpectedType(tclass, edatatype);
 
-    std::cout << "Branch : " << brName.c_str() << " Type int:"  << " Type str1: " << edatatype <<  std::endl;
-    std::cout << " -- nLeaf: " << br->GetNleaves() << " Entries: " << br->GetEntries() << 
-      " GetMaxBaskets: " << br->GetMaxBaskets() << std::endl;
+//    std::cout << "Branch : " << brName.c_str() << " Type int:"  << " Type str1: " << edatatype <<  std::endl;
+//    std::cout << " -- nLeaf: " << br->GetNleaves() << " Entries: " << br->GetEntries() << 
+//      " GetMaxBaskets: " << br->GetMaxBaskets() << std::endl;
     brType.push_back(edatatype);
 
     // Push index of the branch-type combination
@@ -108,8 +110,8 @@ void muenalysis::setVectors(int fileIndex){
   // Generate a local vector of vectors of ints.
   // Index 1: branch, Index 2: event
   std::vector< std::vector< int > > intBranches;
-  std::cout << "File Index; " << fileIndex << std::endl;
-  std::cout << "\nAbout to generate a vector. Number of ints; " << nInts[fileIndex] << " Nuber of floats; " << nFloats[fileIndex] << " Number of doubles; " << nDoubles[fileIndex] << std::endl;
+  std::cout << "CORE: File Index; " << fileIndex << std::endl;
+  std::cout << "\nCORE: About to generate a vector. Number of ints; " << nInts[fileIndex] << " Nuber of floats; " << nFloats[fileIndex] << " Number of doubles; " << nDoubles[fileIndex] << std::endl;
   for(int j = 0; j < nInts[fileIndex]; ++j){
     std::vector<int> intVec;
     for(int k = 0; k < nEvents[fileIndex]; ++k){
@@ -117,7 +119,7 @@ void muenalysis::setVectors(int fileIndex){
     }
     intBranches.push_back(intVec);
   }
-  std::cout << "Generated " << intBranches.size() << " int branches with " <<
+  std::cout << "CORE: Generated " << intBranches.size() << " int branches with " <<
     intBranches[0].size() << " events each for file number " << fileIndex <<
     std::endl;
   // Load the local vector into global vctor of files
@@ -133,7 +135,7 @@ void muenalysis::setVectors(int fileIndex){
     }
     floatBranches.push_back(floatVec);
   }
-  std::cout << "Generated " << floatBranches.size() << " float branches with " <<
+  std::cout << "CORE: Generated " << floatBranches.size() << " float branches with " <<
     floatBranches[0].size() << " events each for file number " << fileIndex <<
     std::endl;
   // Load the local vector into global vctor of files
@@ -149,7 +151,7 @@ void muenalysis::setVectors(int fileIndex){
     }
     doubleBranches.push_back(doubleVec);
   }
-  std::cout << "Generated " << doubleBranches.size() << " double branches with " <<
+  std::cout << "CORE: Generated " << doubleBranches.size() << " double branches with " <<
     doubleBranches[0].size() << " events each for file number " << fileIndex <<
     std::endl;
   // Load the local vector into global vctor of files
