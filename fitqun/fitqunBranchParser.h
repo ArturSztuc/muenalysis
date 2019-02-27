@@ -9,7 +9,7 @@
 #include <sstream>
 
 #include "fqevent.h"
-
+#include "analysis/skutil.h"
 
 class fqbrparser{
   public:
@@ -19,12 +19,17 @@ class fqbrparser{
     // Operator, it sets fiTQun branches for a given TChain!
     // It's AWESOME
     void operator()( TChain *fchain );
+    
+    // Fill custom variables
+    void GetEntry();
 
     // Prints an event. The integer can be anything you want, it prints it too...
     void PrintEvent(int i);
 
     // Checks if the current combination is within the T2K official cut.
-    bool isWithinT2KCut();
+    bool isT2KnumuDis();
+    bool isT2KnueApp();
+    bool isT2KnueCC1pi();
 
     // I would prefer it this was private, but we really need to access the variables!
     fqevent *E;
@@ -46,6 +51,8 @@ void fqbrparser::operator()( TChain *fchain ){
   // fiTQun 1R variables
   fchain->SetBranchAddress("fq1rmom", &E->fq1rmom);
   fchain->SetBranchAddress("fq1rnll", &E->fq1rnll);
+  fchain->SetBranchAddress("fq1rpos", &E->fq1rpos);
+  fchain->SetBranchAddress("fq1rdir", &E->fq1rdir);
 
   // fiTQun MR variables
   fchain->SetBranchAddress("fqnmrfit", &E->fqnmrfit);
