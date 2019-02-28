@@ -1,110 +1,86 @@
-#ifndef _FITQUNEFFICIENCY_H_
-#define _FITQUNEFFICIENCY_H_
-#include "core/muenalysis.h"
-#include "TClassTable.h"
+// This is a "simple" fiTQun efficiency class. Basically a glorified plotting
+// script... It is fairly simplistic, but it will be expanded and generalized
+// later.
+#ifndef _fqeffsimp_h_
+#define _fqeffsimp_h_
+
+#include "TH2D.h"
+#include "TH1D.h"
+#include "TString.h"
 #include "TFile.h"
 #include "TTree.h"
-#include "TBrowser.h"
-#include "TH2.h"
-#include "TRandom.h"
-#include "TClassTable.h"
-#include "TSystem.h"
+#include "TChain.h"
+#include "TStyle.h"
+#include "TAxis.h"
+#include "TGaxis.h"
+#include "TGraph.h"
+#include "TF1.h"
+#include "TLegend.h"
+#include "TCanvas.h"
 #include "TROOT.h"
+#include "TMath.h"
+#include <iostream>
+#include <string>
+#include <sstream>
 
-// Struct containing information about each branch
-  
-//struct nRingsTuple{
-//  std::string bName; 
-//  int nrings; };
-//
-//struct pidTuple{
-//  std::string bName; 
-//  int pid; };
-//
-//struct nRingsFQ{
-//  std::string bName; 
-//  int nRings[10][10]; };
-//
-//struct pidFQ{
-//  std::string bName; 
-//  int pid[10][10]; };
-//};
+#include "core/muenalysis.h"
+#include "analysis/skutil.h"
+#include "fitqunBranchParser.h"
 
-struct Event{
-  // MC truth
-  UInt_t nring;   // Number of rings
-  UChar_t ip[10]; // PID
-
-  // fiTQun values
-  UInt_t fqmrnring[10];   // Number of rings
-  UInt_t fqmrpid[15][6];  // PID
-
-  Event(){}
-};
-
-struct OutEvent{
-  bool is_nring;
-  bool is_pid_all;
-  bool is_pid_first;
-  bool is_pid_all_nring;
-};
-
-class fitqunEfficiency
-{
-
+class fqeffsimp {
   public:
-    // Default constructor
-    fitqunEfficiency();
+    // Constructors
+    fqeffsimp();
+    fqeffsimp(muenalysis *coreIn);
 
-    // Constructor with setup core
-    fitqunEfficiency(muenalysis *coreIn);
-
-    fitqunEfficiency(muenalysis *coreIn, int treenumber);
-
-    // Sets the core
+    // Set branches etc.
     void setCore(muenalysis *coreIn);
 
-    // Sets the required branches
-    void setBranches();
+    // Nbins
+    void setNBins(int nBinsIn){ nbins = nBinsIn; };
 
-    // Sets the output name
-    void setName(char *name);
-    void appendName(char *name);
+    // Set TLegend (it appends to a vector of strings)
+    void setTLegendTitle(std::string legT){ legendTitles.push_back(legT); };
 
-    void operator()( TChain *fChain );
+    // Sets cuts
+//    void setCutsBool(bool cutsIn){ cuts = cutsIn; };
 
+    // Sets output name
+    void setOutPrefix(std::string prefix);
+    void setOutPostfix(std::string postfix);
+    void setOutputName(std::string outName){ outputfilename = outName; };
 
+    void setCuts(bool numu, bool nue, bool nuecc1pi);
+
+    // Make llh plots
+    void plotLlh();
 
   private:
-    // Core of the muenalysis
+    // Core 
     muenalysis *core;
 
-    // Output file and tree
-    TFile *outFile;
-    TTree *outTree;
+    // Store the TChains and plots locally
+    TChain **chains;
+    TH1D **plots;
+
+    // Number of histogram bins
+    int nbins;
+
+    // Legend titles
+    std::vector<std::string> legendTitles;
+    std::vector< fqbrparser* > parser;
+
+    // Do we apply T2K cuts?
+    bool T2KCUTnumuDis;
+    bool T2KCUTnueApp;
+    bool T2KCUTnueCC1pi;
+
+    // Number of files to nalyse;
+    int nfiles;
+
 
     // Output filename
-    std::string outputname;
-
-    // Tree name and description
-    std::string treename;
-    std::string treedescription;
-
-    // Which tree are we selecting?
-    int treeNum;
-
-    Event br;
-    OutEvent out;
+    std::string outputfilename;
 
 };
-
-
-//void muenalysis::operator()( TChain *fChain ){
-//  // Set the bloody IP's...
-//  fChain->SetBranchAddress("nring", &br.nring);
-//  fChain->SetBranchAddress("ip", &br.ip);
-//  std::cout << "FLAG PARSING" << std::endl;
-//}
-
-
 #endif

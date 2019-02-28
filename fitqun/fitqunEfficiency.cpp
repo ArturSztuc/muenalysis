@@ -1,133 +1,193 @@
-#include "fitqunEfficiency.h"
+// This is a "simple" fiTQun efficiency class. Basically a glorified plotting
+// script... It is fairly simplistic, but it will be expanded and generalized
+// later.
+#include "fitqunEfficiencySimple.h"
 
-// Default constructor definition
-fitqunEfficiency::fitqunEfficiency(){
-  treename = "fitqun_efficiency";
-  treedescription = "Efficiency of fitqun fit";
 
-  treeNum = 0;
+// Boring default constructor
+fqeffsimp::fqeffsimp(){
+  outputfilename = "outputfilename";
+  nbins = 10;
+
+  T2KCUTnumuDis = false;
+  T2KCUTnueApp = false;
+  T2KCUTnueCC1pi = false;
 }
 
-// Constructor overloaded with core
-fitqunEfficiency::fitqunEfficiency(muenalysis *coreIn){
-  treename = "fitqun_efficiency";
-  treedescription = "Efficiency of fitqun fit";
-
-  treeNum = 0;
-
-  setCore(coreIn);
-}
-
-fitqunEfficiency::fitqunEfficiency(muenalysis *coreIn, int treenumber){
-  treename = "fitqun_efficiency";
-  treedescription = "Efficiency of fitqun fit";
-
-  treeNum = treenumber;
-
-  setCore(coreIn);
-}
-
-// Sets core
-void fitqunEfficiency::setCore(muenalysis *coreIn){
+// Overload the constructor with core
+fqeffsimp::fqeffsimp(muenalysis *coreIn){
+  // Set core
   core = coreIn;
 
-  // Make default namebase
-  outputname = core->getOutputName();
+  // Sort out the file name
+  outputfilename = core->getOutputName();
   std::size_t pos;
-  pos = outputname.find(".root");
-  outputname = outputname.substr(0,pos);
-}
+  pos = outputfilename.find(".root");
+  outputfilename = outputfilename.substr(0, pos);
 
-void fitqunEfficiency::setName(char* name){
-//  outputname.clear();
-  outputname = name;
-}
+  // Get the number of files
+  nfiles = core->getNFiles();
 
-void fitqunEfficiency::appendName(char* name){
-  outputname += name;
-}
+  // Initialize plots and chains
+  plots = new TH1D*[nfiles];
+  chains = new TChain*[nfiles];
 
-// Will set the branches using core
-void fitqunEfficiency::setBranches(){
-  // no core, no branches to set
-  if(!core){
-    std::cerr << __FILE__ << ":" << __LINE__ << " Need to set core before setBranches!" << std::endl;
-    std::exit(EXIT_FAILURE);
+  // Now REALLY initialize each chain and it's parser
+  for(int i = 0; i < nfiles; ++i){
+    chains[i] = new TChain("h1");
+    chains[i]->Add((core->getFileName(i)).c_str());
+
+    // Make a new parser and add to a vector (one parser per TChain)
+    fqbrparser *parserdummy = new fqbrparser();
+    parser.push_back(parserdummy);
   }
 
-  // Set the output file/tree names
-  outFile = new TFile((outputname+"_fiTQun_efficiencyies.root").c_str(), "recreate");
-  outTree = new TTree(treename.c_str(), treedescription.c_str());
-
-  TChain *chain = new TChain("h1");
-  chain->Add(core->getFileName(treeNum).c_str());
-
-  /******************************************/
-  /*          SETTING BRANCHES              */
-  /******************************************/
-  /* This is not nice. Need to shift this   */
-  /* to .h, preferebly into some compact    */
-  /* struct!                                */
-  /*----------------------------------------*/
-  /*----------------------------------------*/
-  /* And maybe do it from the core, that way*/
-  /* We won't have to do it for each class  */
-  /******************************************/
-
-  // Set input branches (need to add momentum)
-  chain->SetBranchAddress("nring", &br.nring);
-  chain->SetBranchAddress("ip", &br.ip);
-  chain->SetBranchAddress("fqmrnring", &br.fqmrnring);
-  chain->SetBranchAddress("fqmrpid", &br.fqmrpid);
-
-  // Set output branches (need to add momentum)
-  outTree->Branch("is_nring", &out.is_nring, "is_ring/O");
-  outTree->Branch("is_pid_all", &out.is_pid_all, "is_pid_all/O");
-  outTree->Branch("is_pid_first", &out.is_pid_first, "is_pid_first/O");
-  outTree->Branch("is_pid_all_nring", &out.is_pid_all_nring, "is_pid_all_nring/O");
-
-  outTree->Branch("nring", &br.nring, "nring/I");
-  outTree->Branch("ip", &br.ip, "ip[10]/b");
-  outTree->Branch("fqmrnring", &br.fqmrnring, "fqmrnring[10]/I");
-  outTree->Branch("fqmrpid", &br.fqmrpid, "fqmrpid[15][6]");
-
-  // Get number of entries (Do it from core!)
-  int nEntries = chain->GetEntries();
-
-  // Iterate through all the events
-  for (int i = 0; i < nEntries ; ++i){
-    chain->GetEntry(i);
-
-    if (br.nring == br.fqmrnring[0])
-      out.is_nring = true;
-    else
-      out.is_nring = false;
-
-
-    if (int(br.ip[0]) == br.fqmrpid[0][0])
-      out.is_pid_first = true;
-    else
-      out.is_pid_first = false;
-
-    for(UInt_t j = 0; j < br.nring; ++j){
-      out.is_pid_all = true;
-      if( int(br.ip[j]) != br.fqmrpid[0][j]+1 )
-        out.is_pid_all = false;
-    }
-
-    out.is_pid_all_nring = true;
-    if (br.nring != br.fqmrnring[0])
-      out.is_pid_all_nring = false;
-    else{
-      for(UInt_t j = 0; j < br.nring; ++j){
-        if( int(br.ip[j]) != br.fqmrpid[0][j]+1 )
-          out.is_pid_all_nring = false;
-      }
-    }
-
-    outTree->Fill();
-  }
-  outTree->Write(treename.c_str());
-  outFile->Close();
+  // The rest of the constructor...
+  nbins = 10;
+  T2KCUTnumuDis = false;
+  T2KCUTnueApp = false;
+  T2KCUTnueCC1pi = false;
 }
+
+// Sets core 
+void fqeffsimp::setCore(muenalysis *coreIn){
+  // Set the core
+  core = coreIn;
+
+  // Sort out the output filename
+  outputfilename = core->getOutputName();
+  std::size_t pos;
+  pos = outputfilename.find(".root");
+  outputfilename = outputfilename.substr(0, pos);
+
+  // Get the number of files
+  nfiles = core->getNFiles();
+
+  // Initialize plots and chains
+  plots = new TH1D*[nfiles];
+  chains = new TChain*[nfiles];
+
+  // Now REALLY initialize each chain and it's parser
+  for(int i = 0; i < nfiles; ++i){
+    chains[i] = new TChain("h1");
+    chains[i]->Add((core->getFileName(i) + "/h1").c_str());
+    std::cout << "Adding " << (core->getFileName(i) + "/h1").c_str() << std::endl;
+
+    // Make a new parser and add to a vector (one parser per TChain)
+    fqbrparser *parserdummy = new fqbrparser();
+    parser.push_back(parserdummy);
+  }
+}
+
+// Sets the cuts.
+void fqeffsimp::setCuts(bool numu, bool nue, bool nuecc1pi){
+  T2KCUTnumuDis = numu;
+  T2KCUTnueApp = nue;
+  T2KCUTnueCC1pi = nuecc1pi;
+
+  if(numu)
+    std::cout << "FQEFFSIMP: Running numu disappearance cuts!" << std::endl;
+  if(nue)
+    std::cout << "FQEFFSIMP: Running nue appearance cuts!" << std::endl;
+  if(nuecc1pi)
+    std::cout << "FQEFFSIMP: Running nueCC1pi sample cuts!" << std::endl;
+}
+
+// The main plotting function. For now it's just a llh plotter, but we will
+// expand ang generalise this!
+void fqeffsimp::plotLlh(){
+
+  // Some initial asthetics
+  // Maybe move it to the config...
+  gStyle->SetOptStat(0);
+  gStyle->SetPalette(51,0);
+  gStyle->SetTitleBorderSize(0);
+  gStyle->SetTitleStyle(0);
+  gStyle->SetTitleX(0.1f);
+  gStyle->SetTitleW(0.8f);
+
+  // Set the plot type template
+  TH1D* dummy_template = new TH1D("fqmrnll[0]", "fqmrnll[0] comparison", nbins, 0, 60000);
+
+  // Setup plots and set branches through parser.
+  for(int i = 0; i < nfiles; ++i){
+    plots[i] = (TH1D*)dummy_template->Clone();
+
+    // This operator actually sets the branches. 
+    (*parser[i])(chains[i]);
+  }
+
+  // Some sanity checks, just in case
+  for(int i = 1; i < nfiles; ++i){
+    if(chains[i-1]->GetEntries()!= chains[i]->GetEntries()){
+      std::cout << "FLAG: number of entries don't math between: " << std::endl;
+    }
+  }
+
+  // Start plotting "fun". 
+  TCanvas *c = new TCanvas("c", "c", 1000, 800);
+  c->SetFillColor(0);
+
+  // We will fill all the files/plots separately.
+  for( int file = 0; file < nfiles; ++file){
+    std::cout << "File: " << file << " nEntries: " << chains[file]->GetEntries() << std::endl;
+
+    // Now go into the file and fill the histograms
+    for(int i = 0; i < chains[file]->GetEntries(); ++i){
+
+      // Get entry for this file/event. The parser contains has all the yummy values
+      chains[file]->GetEntry(i);
+      parser[file]->GetEntry();
+
+      if(i == 1)
+        parser[file]->PrintEvent(file);
+
+      // Are the T2K cuts met?
+      if((T2KCUTnumuDis)&&(!parser[file]->isT2KnumuDis()))
+        continue;
+      if((T2KCUTnueApp)&&(!parser[file]->isT2KnueApp()))
+        continue;
+      if((T2KCUTnueCC1pi)&&(!parser[file]->isT2KnueCC1pi()))
+        continue;
+
+      plots[file]->Fill(parser[file]->E->fqmrnll[0]);
+
+      // Prints first event for each file, just for dome extra debugging.
+    }
+    // Scale the histogram to get an "efficiency". In this case the denominator
+    // is the pre-cut number of events
+    plots[file]->Scale(1/(double)chains[file]->GetEntries());
+    
+    // Apply colors. Starting with Black
+    plots[file]->SetLineColor(file+1);
+
+    // The rest of the asthetics (local)
+    plots[file]->GetXaxis()->SetTitle("Best fit fiTQun -lnL (fqmrnll[0])");
+    plots[file]->GetYaxis()->SetTitle("Tagging efficiency");
+
+    plots[file]->SetLineWidth(2);
+
+    if (file==0)
+      plots[file]->GetYaxis()->SetTitleOffset(1.5);
+
+  }
+  // The rest of the asthetics (global)
+  gPad->SetLeftMargin(0.15);
+
+  // Make a legend!
+  TLegend *leg = new TLegend(0.48, 0.7, 0.89, 0.89);
+  leg->SetFillColor(10);
+  leg->SetLineColor(0);
+  leg->SetTextSize(0.05);
+  for(int i = 0; i < nfiles ; ++i){
+    leg->AddEntry(plots[i], legendTitles[i].c_str());
+    if(i==0)
+      plots[i]->Draw();
+    else
+      plots[i]->Draw("SAME");
+  }
+  leg->Draw("SAME");
+  c->SaveAs((outputfilename + "_eff_fqmrnll.png").c_str());
+}
+
 
