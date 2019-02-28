@@ -7,7 +7,6 @@
 #include "core/muenalysis.h"
 #include "analysis/comparison.h"
 #include "fitqun/fitqunEfficiency.h"
-#include "fitqun/fitqunEfficiencySimple.h"
 
 int main(int argc, char *argv[]) {
 
@@ -31,7 +30,7 @@ int main(int argc, char *argv[]) {
 //  fitqunEfficiency *fitqun = new fitqunEfficiency(core);
 //  fitqun->setBranches();
 
-  fqeffsimp *fitqun = new fqeffsimp(core);
+  fqeff *fitqun = new fqeff(core);
   fitqun->setTLegendTitle( "woFlag" );
   fitqun->setTLegendTitle( "wFlag" );
 

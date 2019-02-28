@@ -1,8 +1,8 @@
-// This is a "simple" fiTQun efficiency class. Basically a glorified plotting
-// script... It is fairly simplistic, but it will be expanded and generalized
+// This is a fiTQun efficiency class. Basically a glorified plotting
+// script... It is fairly listic, but it will be expanded and generalized
 // later.
-#ifndef _fqeffsimp_h_
-#define _fqeffsimp_h_
+#ifndef _fqeff_h_
+#define _fqeff_h_
 
 #include "TH2D.h"
 #include "TH1D.h"
@@ -27,11 +27,11 @@
 #include "analysis/skutil.h"
 #include "fitqunBranchParser.h"
 
-class fqeffsimp {
+class fqeff {
   public:
     // Constructors
-    fqeffsimp();
-    fqeffsimp(muenalysis *coreIn);
+    fqeff();
+    fqeff(muenalysis *coreIn);
 
     // Set branches etc.
     void setCore(muenalysis *coreIn);

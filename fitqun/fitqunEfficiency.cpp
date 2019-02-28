@@ -1,11 +1,10 @@
-// This is a "simple" fiTQun efficiency class. Basically a glorified plotting
-// script... It is fairly simplistic, but it will be expanded and generalized
-// later.
-#include "fitqunEfficiencySimple.h"
+// This is a fiTQun efficiency class. Basically a glorified plotting script...
+// It is fairly simplistic, but it will be expanded and generalized later.
+#include "fitqunEfficiency.h"
 
 
 // Boring default constructor
-fqeffsimp::fqeffsimp(){
+fqeff::fqeff(){
   outputfilename = "outputfilename";
   nbins = 10;
 
@@ -15,7 +14,7 @@ fqeffsimp::fqeffsimp(){
 }
 
 // Overload the constructor with core
-fqeffsimp::fqeffsimp(muenalysis *coreIn){
+fqeff::fqeff(muenalysis *coreIn){
   // Set core
   core = coreIn;
 
@@ -50,7 +49,7 @@ fqeffsimp::fqeffsimp(muenalysis *coreIn){
 }
 
 // Sets core 
-void fqeffsimp::setCore(muenalysis *coreIn){
+void fqeff::setCore(muenalysis *coreIn){
   // Set the core
   core = coreIn;
 
@@ -80,22 +79,22 @@ void fqeffsimp::setCore(muenalysis *coreIn){
 }
 
 // Sets the cuts.
-void fqeffsimp::setCuts(bool numu, bool nue, bool nuecc1pi){
+void fqeff::setCuts(bool numu, bool nue, bool nuecc1pi){
   T2KCUTnumuDis = numu;
   T2KCUTnueApp = nue;
   T2KCUTnueCC1pi = nuecc1pi;
 
   if(numu)
-    std::cout << "FQEFFSIMP: Running numu disappearance cuts!" << std::endl;
+    std::cout << "FQEFF: Running numu disappearance cuts!" << std::endl;
   if(nue)
-    std::cout << "FQEFFSIMP: Running nue appearance cuts!" << std::endl;
+    std::cout << "FQEFF: Running nue appearance cuts!" << std::endl;
   if(nuecc1pi)
-    std::cout << "FQEFFSIMP: Running nueCC1pi sample cuts!" << std::endl;
+    std::cout << "FQEFF: Running nueCC1pi sample cuts!" << std::endl;
 }
 
 // The main plotting function. For now it's just a llh plotter, but we will
 // expand ang generalise this!
-void fqeffsimp::plotLlh(){
+void fqeff::plotLlh(){
 
   // Some initial asthetics
   // Maybe move it to the config...
