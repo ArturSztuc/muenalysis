@@ -33,6 +33,32 @@ class fqbrparser{
 
     // I would prefer it this was private, but we really need to access the variables!
     fqevent *E;
+
+
+    // What do we actually want to plot?
+    // FLAG : MAYBE SHOVE ALL THIS PLOTTING STUFF IN A SEPARATE CLASS?
+    void reset_bools();
+    bool is_wall;
+    bool is_fqwall;
+    bool is_fqtowall;
+    bool is_fqfromwall;
+    bool is_fqmrnll;
+    void Fill();
+    void fillVector();
+
+    TH1D *th1d_wall;
+    TH1D *th1d_fqwall;
+    TH1D *th1d_fqtowall;
+    TH1D *th1d_fqfromwall;
+
+    TH1D *th1d_fqmrnll;
+    std::vector< TH1D * > th1d_vector;
+    void InitPlots();
+
+
+
+
+
 };
 
 #endif
