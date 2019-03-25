@@ -52,8 +52,10 @@ class fqeff {
 
     void setCuts(bool numu, bool nue, bool nuecc1pi);
 
-    // Make llh plots
+    // Make plots
     void plotLlh();
+    void plotWalls(int nbins,int wall, int pid);
+
 
   private:
     // Core 
@@ -61,7 +63,9 @@ class fqeff {
 
     // Store the TChains and plots locally
     TChain **chains;
-    TH1D **plots;
+    TH1D **plots1D;
+
+    std::string getWallDef(int wall);
 
     // Number of histogram bins
     int nbins;
@@ -75,8 +79,13 @@ class fqeff {
     bool T2KCUTnueApp;
     bool T2KCUTnueCC1pi;
 
+    bool T2KCuts(int file);
+
     // Number of files to nalyse;
     int nfiles;
+    void plotTemplate(TH1D *dummy_TH1D);
+    void plotTemplate();
+
 
 
     // Output filename
