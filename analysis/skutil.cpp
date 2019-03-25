@@ -210,7 +210,7 @@ Double_t fqutil::fqwall( TVector3 & pos ){
 }
 
 // Convert double[] into floats and call towall(float) function
-Double_t fqutil::fqwall( double pos[] ){
+Double_t fqutil::fqwall( double pos[3] ){
   float pos_[3]={};
   for(int i = 0; i < 3; ++i)
     pos_[i] = (float)pos[i];
@@ -219,11 +219,11 @@ Double_t fqutil::fqwall( double pos[] ){
 }
 
 // Calculate wall, fiTQun style
-Double_t fqutil::fqwall( float pos[] ){
+Double_t fqutil::fqwall( float pos[3] ){
     float Rmax = 1690.;
     float Zmax = 1810.;
-    float rr   = sqrt(pos[1]*pos[0] + pos[1]*pos[1]);
-    float absz = TMath::Abs(pos[3]);
+    float rr   = sqrt(pos[0]*pos[0] + pos[1]*pos[1]);
+    float absz = TMath::Abs(pos[2]);
 
     //check if vertex is outside tank
     float signflg = 1.;
@@ -233,7 +233,10 @@ Double_t fqutil::fqwall( float pos[] ){
     //find min distance to wall
     float distz = TMath::Abs(Zmax-absz);
     float distr = TMath::Abs(Rmax-rr);
-    float dwall = signflg*fmin(distz,distr);
+
+    float dwall = 0.0;
+    if(distz <= distr) dwall = signflg*distz;
+    else dwall = signflg*distr;
     return dwall;
 }
 
@@ -268,7 +271,7 @@ Double_t fqutil::fqtowall( float pos[], float dir[] ){
   if(dir[0]!=0 || dir[1]!=0){
     A = (dir[0]*dir[0]+dir[1]*dir[1]);
     B = 2*(pos[0]*dir[0]+pos[1]*dir[1]);
-    C = (dir[0]*dir[0]+dir[1]*dir[1]-R*R);
+    C = (pos[0]*pos[0]+pos[1]*pos[1]-R*R);
     RAD = (B*B) - (4*A*C);
     l_b = ((-1*B) + sqrt(RAD))/(2*A);
   }

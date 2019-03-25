@@ -65,8 +65,8 @@ namespace skutil {
 
 namespace fqutil {
   Double_t fqwall( TVector3 & );
-  Double_t fqwall( double [] );
-  Double_t fqwall( float [] );
+  Double_t fqwall( double pos[3] );
+  Double_t fqwall( float pos[3] );
 
   Double_t fqtowall( TVector3 &, TVector3 & );
   Double_t fqtowall( double [], double [] );
