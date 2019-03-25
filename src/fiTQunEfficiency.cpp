@@ -35,19 +35,27 @@ int main(int argc, char *argv[]) {
   fitqun->setTLegendTitle( "wFlag" );
 
   // Do Numu disappearance 
-  fitqun->setCuts(true, false, false);
+  fitqun->setCuts(true, // T2K numu disappearance cut
+      false,            // T2K nue appearance cut
+      false);           // T2K nueCC1pi cut
   fitqun->setOutputName("output_numu");
-  fitqun->plotLlh();
+//  fitqun->plotLlh();
+  fitqun->plotWalls(30, 0, 2);
+//  fitqun->plotWalls(30, 1, 2);
 
   // Do nue appearance
   fitqun->setCuts(false, true, false);
   fitqun->setOutputName("output_nue");
-  fitqun->plotLlh();
-
+//  fitqun->plotLlh();
+  fitqun->plotWalls(30,0, 1);
+//  fitqun->plotWalls(30,1, 1);
+//
   // Do nue appearance
   fitqun->setCuts(false, false, true);
   fitqun->setOutputName("output_nueCC1pi");
-  fitqun->plotLlh();
+//  fitqun->plotLlh();
+  fitqun->plotWalls(30,0, 1);
+//  fitqun->plotWalls(30,1, 1);
   
 
   return 0; 
