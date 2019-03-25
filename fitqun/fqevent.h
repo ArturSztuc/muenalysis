@@ -5,7 +5,6 @@ struct fqevent{
   // Certain SK parameters
   float wall; 
 
-  // 
 
   // Subevent information
   int fqnse;
@@ -24,7 +23,10 @@ struct fqevent{
   float fqmrpid[150][6];
 
   // User defined/custom variables
+  float sktowall[7];
+  float skwall[7];
   float fqtowall[7]; // This will be towall for [0][7] fq1rpos/dir
+  float fqfromwall[7]; // This will be towall for [0][7] fq1rpos/dir
   float fqwall[7];
 
 };
